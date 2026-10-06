@@ -2,10 +2,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from core.config import settings
 
+# --- Configuração de Argumentos do Engine ---
+# O SQLite precisa do 'check_same_thread': False para funcionar corretamente com o FastAPI
+connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
+
+
+
 # --- Engine de Conexão ---
 # Instancia o mecanismo que gerencia as conexões com o banco de dados MySQL
 engine = create_engine(
     settings.DATABASE_URL,
+    connect_args=connect_args,
     pool_pre_ping=True  # Verifica se a conexão está ativa antes de executar queries
 )
 
